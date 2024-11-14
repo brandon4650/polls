@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WoW Class Polls</title>
+    <style>
+        :root {
+            --wow-gold: #FFB100;
+            --wow-blue: #0A3C62;
+            --wow-dark: #1A1C1E;
+        }
+
+        body {
+            background: #1a1e2e;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .section-divider {
+            border: 0;
+            height: 2px;
+            background: var(--wow-gold);
+            margin: 40px auto;
+            width: 80%;
+        }
+
+        .logo {
+            max-width: 300px;
+            margin: 20px auto;
+            display: block;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    .expansion-tabs,
+    .tab-btn,
+    .tab-btn.active
+        .poll-section {
+            display: none;
+        }
+
+        .poll-section.active {
+            display: block;
+        }
+
+        .poll-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .poll-card {
+            background: rgba(10, 60, 98, 0.9);
+            border: 2px solid var(--wow-gold);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .class-icon {
+            width: 32px;
+            height: 32px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        .progress-bar {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            height: 25px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress {
+            background: var(--wow-gold);
+            height: 100%;
+            transition: width 0.3s ease;
+            text-align: center;
+            line-height: 25px;
+        }
+
+        .poll-editor {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--wow-blue);
+            border: 2px solid var(--wow-gold);
+            padding: 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            max-height: 80vh;
+            overflow-y: auto;
+            min-width: 300px;
+        }
+
+        .editor-content input {
+            width: 100px;
+            margin: 10px 0;
+            padding: 5px;
+        }
+
+        .editor-content button {
+            background: var(--wow-gold);
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .poll-editor-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>World of Warcraft Class Polls</h1>
+            <img src="SOE.png" alt="SOE Logo" class="logo">
+        </header>
+
+        <div id="mop-polls" class="poll-section">
+            <h2>Mists of Pandaria Classes (5.4.8)</h2>
+            <div class="poll-grid">
+                <div class="poll-card" data-poll-id="mop-warrior">
+                    <h3>Warrior</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="mop-paladin">
+                    <h3>Paladin</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="mop-hunter">
+                    <h3>Hunter</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="mop-rogue">
+                    <h3>Rogue</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="mop-priest">
+                    <h3>Priest</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="mop-deathknight">
+                    <h3>Death Knight</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="mop-shaman">
+                    <h3>Shaman</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="mop-mage">
+                    <h3>Mage</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="mop-warlock">
+                    <h3>Warlock</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="mop-monk">
+                    <h3>Monk</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="mop-druid">
+                    <h3>Druid</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="wotlk-polls" class="poll-section">
+            <h2>Wrath of the Lich King Classes</h2>
+            <div class="poll-grid">
+                <div class="poll-card" data-poll-id="wotlk-warrior">
+                    <h3>Warrior</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="wotlk-paladin">
+                    <h3>Paladin</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="wotlk-hunter">
+                    <h3>Hunter</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="wotlk-rogue">
+                    <h3>Rogue</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="wotlk-priest">
+                    <h3>Priest</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="wotlk-deathknight">
+                    <h3>Death Knight</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="wotlk-shaman">
+                    <h3>Shaman</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="wotlk-mage">
+                    <h3>Mage</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="wotlk-warlock">
+                    <h3>Warlock</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div class="poll-card" data-poll-id="wotlk-druid">
+                    <h3>Druid</h3>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       
+        function initializePolls() {
+            const polls = {};
+            document.querySelectorAll('.poll-card').forEach(card => {
+                const pollId = card.dataset.pollId;
+                const savedValue = localStorage.getItem(pollId) || 0;
+                polls[pollId] = parseInt(savedValue);
+                updatePollDisplay(pollId, savedValue);
+            });
+            return polls;
+        }
+        let polls = initializePolls();
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                document.querySelectorAll('.poll-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(`${button.dataset.expansion}-polls`).classList.add('active');
+            });
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.altKey && e.key === '0') {
+                openPollEditor();
+            }
+        });
+
+        function openPollEditor() {
+            const existingEditor = document.querySelector('.poll-editor');
+            if (existingEditor) {
+                existingEditor.remove();
+            }
+
+            const editor = document.createElement('div');
+            editor.className = 'poll-editor';
+            
+            let editorContent = '<div class="editor-content"><h3>Edit All Polls</h3>';
+            
+            for (const pollId in polls) {
+                editorContent += `
+                    <div class="poll-editor-item">
+                        <label>${pollId}: </label>
+                        <input type="number" min="0" max="100" value="${polls[pollId]}" data-poll-id="${pollId}">
+                        <button onclick="updateSinglePoll('${pollId}', this.previousElementSibling.value)">Update</button>
+                    </div>
+                `;
+            }
+            
+            editorContent += '<button onclick="closeEditor()">Close</button></div>';
+            editor.innerHTML = editorContent;
+            document.body.appendChild(editor);
+        }
+
+        function updateSinglePoll(pollId, value) {
+            value = Math.max(0, Math.min(100, parseInt(value)));
+            polls[pollId] = value;
+            localStorage.setItem(pollId, value);
+            updatePollDisplay(pollId, value);
+        }
+
+        function updatePollDisplay(pollId, value) {
+            const poll = document.querySelector(`[data-poll-id="${pollId}"]`);
+            if (poll) {
+                const progressBar = poll.querySelector('.progress');
+                progressBar.style.width = `${value}%`;
+                progressBar.textContent = `${value}%`;
+            }
+        }
+
+        function closeEditor() {
+            const editor = document.querySelector('.poll-editor');
+            if (editor) {
+                editor.remove();
+            }
+        }
+    </script>
+</body>
+</html>

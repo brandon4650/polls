@@ -156,17 +156,31 @@ Druid: {wotlk-druid}%">
     <script>
         // Load poll data from localStorage and update meta description
         window.onload = function() {
-            const metaDesc = document.querySelector('meta[property="og:description"]');
-            let description = metaDesc.content;
-            
-            // Replace placeholders with actual values
-            document.querySelectorAll('[data-poll-id]').forEach(poll => {
-                const pollId = poll.dataset.pollId;
-                const value = localStorage.getItem(pollId) || '0';
-                description = description.replace(`{${pollId}}`, value);
-            });
-            
-            metaDesc.content = description;
+            function updateMetaDescription() {
+                const metaDesc = document.querySelector('meta[property="og:description"]');
+                let description = '';
+                
+                // Build MoP section
+                description += 'MoP 5.4.8:\n';
+                for (const pollId in polls) {
+                    if (pollId.startsWith('mop-')) {
+                        const className = pollId.replace('mop-', '');
+                        description += `${className.charAt(0).toUpperCase() + className.slice(1)}: ${polls[pollId]}%\n`;
+                    }
+                }
+                
+                description += '\nWotLK 3.3.5:\n';
+                for (const pollId in polls) {
+                    if (pollId.startsWith('wotlk-')) {
+                        const className = pollId.replace('wotlk-', '');
+                        description += `${className.charAt(0).toUpperCase() + className.slice(1)}: ${polls[pollId]}%\n`;
+                    }
+                }
+                
+                metaDesc.content = description;
+            }
+
+            updateMetaDescription();
         };
     </script>
 </body>

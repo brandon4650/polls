@@ -1,409 +1,208 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>WoW Class Polls - Live Data</title>
-    <meta property="og:title" content="SOE WoW Class Polls - Live Results">
-    <meta property="og:description" content="
-MoP 5.4.8:
-Warrior: {mop-warrior}%
-Paladin: {mop-paladin}%
-Hunter: {mop-hunter}%
-Rogue: {mop-rogue}%
-Priest: {mop-priest}%
-Death Knight: {mop-deathknight}%
-Shaman: {mop-shaman}%
-Mage: {mop-mage}%
-Warlock: {mop-warlock}%
-Monk: {mop-monk}%
-Druid: {mop-druid}%
-
-WotLK 3.3.5:
-Warrior: {wotlk-warrior}%
-Paladin: {wotlk-paladin}%
-Hunter: {wotlk-hunter}%
-Rogue: {wotlk-rogue}%
-Priest: {wotlk-priest}%
-Death Knight: {wotlk-deathknight}%
-Shaman: {wotlk-shaman}%
-Mage: {wotlk-mage}%
-Warlock: {wotlk-warlock}%
-Druid: {wotlk-druid}%">
-    <meta property="og:image" content="SOE.png">
-    <meta property="og:url" content="https://soepoll.netlify.app">
-    <meta property="og:type" content="website">
-    <meta name="theme-color" content="#FFB100">
-    <style>        :root {
-            --wow-gold: #FFB100;
-            --wow-blue: #0A3C62;
-            --wow-dark: #1A1C1E;
-        }
-
+    <title>WoW Class Polls</title>
+    <style>
         body {
-            background: #1a1e2e;
+            background-color: #1a1f2b;
             color: white;
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
         }
 
-        .section-divider {
-            border: 0;
-            height: 2px;
-            background: var(--wow-gold);
-            margin: 40px auto;
-            width: 80%;
+        .settings {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #2c3142;
+            border-radius: 5px;
         }
 
-        .logo {
-            max-width: 300px;
-            margin: 20px auto;
-            display: block;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .webhook-input {
+            width: 300px;
+            padding: 5px;
+            margin-right: 10px;
+            background-color: #1a1f2b;
+            border: 1px solid #3d4356;
+            color: white;
+            border-radius: 3px;
         }
 
-        header {
-            text-align: center;
+        h1, h2 {
+            color: #00b0f4;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
             margin-bottom: 30px;
         }
-    .expansion-tabs,
-    .tab-btn,
-    .tab-btn.active
-        .poll-section {
-            display: none;
-        }
 
-        .poll-section.active {
-            display: block;
-        }
-
-        .poll-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .poll-card {
-            background: rgba(10, 60, 98, 0.9);
-            border: 2px solid var(--wow-gold);
-            border-radius: 8px;
+        .class-box {
+            background-color: #2c3142;
             padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #3d4356;
         }
 
-        .class-icon {
-            width: 32px;
-            height: 32px;
-            vertical-align: middle;
-            margin-right: 10px;
-        }
-
-        .progress-bar {
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 20px;
-            height: 25px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .progress {
-            background: var(--wow-gold);
-            height: 100%;
-            transition: width 0.3s ease;
-            text-align: center;
-            line-height: 25px;
-        }
-
-        .poll-editor {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--wow-blue);
-            border: 2px solid var(--wow-gold);
-            padding: 20px;
-            border-radius: 8px;
-            z-index: 1000;
-            max-height: 80vh;
-            overflow-y: auto;
-            min-width: 300px;
-        }
-
-        .editor-content input {
-            width: 100px;
-            margin: 10px 0;
+        input[type="number"] {
+            background-color: #1a1f2b;
+            border: 1px solid #3d4356;
+            color: white;
             padding: 5px;
+            width: 60px;
+            margin: 0 5px;
+            border-radius: 3px;
         }
 
-        .editor-content button {
-            background: var(--wow-gold);
-            border: none;
-            padding: 5px 15px;
+        .status-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
             border-radius: 5px;
-            cursor: pointer;
+            display: none;
+            animation: fadeOut 3s forwards;
         }
 
-        .poll-editor-item {
-            margin: 10px 0;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
+        .success {
+            background-color: #43b581;
+            color: white;
+        }
+
+        .error {
+            background-color: #f04747;
+            color: white;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
         }
     </style>
 </head>
 <body>
-    <script>
-        // Load poll data from localStorage and update meta description
-        window.onload = function() {
-            const metaDesc = document.querySelector('meta[property="og:description"]');
-            let description = '';
-            
-            // Build MoP section
-            description += 'MoP 5.4.8:\n';
-            for (const pollId in polls) {
-                if (pollId.startsWith('mop-')) {
-                    const className = pollId.replace('mop-', '');
-                    description += `${className.charAt(0).toUpperCase() + className.slice(1)}: ${polls[pollId]}%\n`;
-                }
-            }
-            
-            description += '\nWotLK 3.3.5:\n';
-            for (const pollId in polls) {
-                if (pollId.startsWith('wotlk-')) {
-                    const className = pollId.replace('wotlk-', '');
-                    description += `${className.charAt(0).toUpperCase() + className.slice(1)}: ${polls[pollId]}%\n`;
-                }
-            }
-            
-            metaDesc.content = description;
-        };
-    </script>
-</body>
-</html><body>
-    <div class="container">
-        <header>
-            <h1>World of Warcraft Class Polls</h1>
-            <img src="SOE.png" alt="SOE Logo" class="logo">
-        </header>
-
-        <div id="mop-polls" class="poll-section">
-            <h2>Mists of Pandaria Classes (5.4.8)</h2>
-            <div class="poll-grid">
-                <div class="poll-card" data-poll-id="mop-warrior">
-                    <h3>Warrior</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="mop-paladin">
-                    <h3>Paladin</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="mop-hunter">
-                    <h3>Hunter</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="mop-rogue">
-                    <h3>Rogue</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="mop-priest">
-                    <h3>Priest</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="mop-deathknight">
-                    <h3>Death Knight</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="mop-shaman">
-                    <h3>Shaman</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="mop-mage">
-                    <h3>Mage</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="mop-warlock">
-                    <h3>Warlock</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="mop-monk">
-                    <h3>Monk</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="mop-druid">
-                    <h3>Druid</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="wotlk-polls" class="poll-section">
-            <h2>Wrath of the Lich King Classes</h2>
-            <div class="poll-grid">
-                <div class="poll-card" data-poll-id="wotlk-warrior">
-                    <h3>Warrior</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="wotlk-paladin">
-                    <h3>Paladin</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="wotlk-hunter">
-                    <h3>Hunter</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="wotlk-rogue">
-                    <h3>Rogue</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="wotlk-priest">
-                    <h3>Priest</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="wotlk-deathknight">
-                    <h3>Death Knight</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="wotlk-shaman">
-                    <h3>Shaman</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="wotlk-mage">
-                    <h3>Mage</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="wotlk-warlock">
-                    <h3>Warlock</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <div class="poll-card" data-poll-id="wotlk-druid">
-                    <h3>Druid</h3>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%">0%</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="settings">
+        <input type="text" id="webhookUrl" class="webhook-input" placeholder="Enter Discord Webhook URL">
     </div>
 
+    <h1>World of Warcraft Class Polls</h1>
+
+    <h2>Mists of Pandaria Classes (5.4.8)</h2>
+    <div class="class-grid">
+        <div class="class-box">
+            <span>Warrior</span>
+            <input type="number" id="mop-warrior" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Paladin</span>
+            <input type="number" id="mop-paladin" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <!-- Add all other MOP classes similarly -->
+    </div>
+
+    <h2>Wrath of the Lich King Classes</h2>
+    <div class="class-grid">
+        <div class="class-box">
+            <span>Warrior</span>
+            <input type="number" id="wotlk-warrior" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Paladin</span>
+            <input type="number" id="wotlk-paladin" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <!-- Add all other WOTLK classes similarly -->
+    </div>
+
+    <div id="statusMessage" class="status-message"></div>
+
     <script>
-       
-        function initializePolls() {
-            const polls = {};
-            document.querySelectorAll('.poll-card').forEach(card => {
-                const pollId = card.dataset.pollId;
-                const savedValue = localStorage.getItem(pollId) || 0;
-                polls[pollId] = parseInt(savedValue);
-                updatePollDisplay(pollId, savedValue);
-            });
-            return polls;
+        let updateTimeout;
+
+        function showStatus(message, isError = false) {
+            const statusElement = document.getElementById('statusMessage');
+            statusElement.textContent = message;
+            statusElement.className = 'status-message ' + (isError ? 'error' : 'success');
+            statusElement.style.display = 'block';
+            
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 3000);
         }
-        let polls = initializePolls();
-        document.querySelectorAll('.tab-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                
-                document.querySelectorAll('.poll-section').forEach(section => {
-                    section.classList.remove('active');
+
+        function updateDiscord() {
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(() => {
+                const webhookUrl = document.getElementById('webhookUrl').value;
+                if (!webhookUrl) {
+                    showStatus('Please enter a Discord webhook URL', true);
+                    return;
+                }
+
+                const mopData = {
+                    warrior: document.getElementById('mop-warrior').value,
+                    paladin: document.getElementById('mop-paladin').value,
+                    // Add all other MOP classes
+                };
+
+                const wotlkData = {
+                    warrior: document.getElementById('wotlk-warrior').value,
+                    paladin: document.getElementById('wotlk-paladin').value,
+                    // Add all other WOTLK classes
+                };
+
+                const embed = {
+                    title: "WoW Class Distribution Stats",
+                    color: 3447003,
+                    fields: [
+                        {
+                            name: "__Mists of Pandaria (5.4.8)__",
+                            value: `🗡️ **Warrior:** ${mopData.warrior}%\n` +
+                                   `🛡️ **Paladin:** ${mopData.paladin}%\n` +
+                                   // Add all other MOP classes
+                            inline: true
+                        },
+                        {
+                            name: "__Wrath of the Lich King__",
+                            value: `🗡️ **Warrior:** ${wotlkData.warrior}%\n` +
+                                   `🛡️ **Paladin:** ${wotlkData.paladin}%\n` +
+                                   // Add all other WOTLK classes
+                            inline: true
+                        }
+                    ],
+                    timestamp: new Date().toISOString(),
+                    footer: {
+                        text: "Last updated"
+                    }
+                };
+
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ embeds: [embed] })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showStatus('Updated Discord successfully!');
+                    } else {
+                        showStatus('Failed to update Discord', true);
+                    }
+                })
+                .catch(error => {
+                    showStatus('Error updating Discord: ' + error.message, true);
                 });
-                document.getElementById(`${button.dataset.expansion}-polls`).classList.add('active');
-            });
+            }, 1000); // Waits 1 second after the last change before posting
+        }
+
+        // Save webhook URL to localStorage
+        document.getElementById('webhookUrl').value = localStorage.getItem('webhookUrl') || '';
+        document.getElementById('webhookUrl').addEventListener('change', (e) => {
+            localStorage.setItem('webhookUrl', e.target.value);
         });
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.altKey && e.key === '0') {
-                openPollEditor();
-            }
-        });
-
-        function openPollEditor() {
-            const existingEditor = document.querySelector('.poll-editor');
-            if (existingEditor) {
-                existingEditor.remove();
-            }
-
-            const editor = document.createElement('div');
-            editor.className = 'poll-editor';
-            
-            let editorContent = '<div class="editor-content"><h3>Edit All Polls</h3>';
-            
-            for (const pollId in polls) {
-                editorContent += `
-                    <div class="poll-editor-item">
-                        <label>${pollId}: </label>
-                        <input type="number" min="0" max="100" value="${polls[pollId]}" data-poll-id="${pollId}">
-                        <button onclick="updateSinglePoll('${pollId}', this.previousElementSibling.value)">Update</button>
-                    </div>
-                `;
-            }
-            
-            editorContent += '<button onclick="closeEditor()">Close</button></div>';
-            editor.innerHTML = editorContent;
-            document.body.appendChild(editor);
-        }
-
-        function updateSinglePoll(pollId, value) {
-            value = Math.max(0, Math.min(100, parseInt(value)));
-            polls[pollId] = value;
-            localStorage.setItem(pollId, value);
-            updatePollDisplay(pollId, value);
-        }
-
-        function updatePollDisplay(pollId, value) {
-            const poll = document.querySelector(`[data-poll-id="${pollId}"]`);
-            if (poll) {
-                const progressBar = poll.querySelector('.progress');
-                progressBar.style.width = `${value}%`;
-                progressBar.textContent = `${value}%`;
-            }
-        }
-
-        function closeEditor() {
-            const editor = document.querySelector('.poll-editor');
-            if (editor) {
-                editor.remove();
-            }
-        }
     </script>
 </body>
 </html>

@@ -16,12 +16,13 @@
             padding: 10px;
             background-color: #2c3142;
             border-radius: 5px;
+            display: flex;
+            gap: 10px;
         }
 
         .webhook-input {
-            width: 300px;
+            flex: 1;
             padding: 5px;
-            margin-right: 10px;
             background-color: #1a1f2b;
             border: 1px solid #3d4356;
             color: white;
@@ -66,15 +67,8 @@
             animation: fadeOut 3s forwards;
         }
 
-        .success {
-            background-color: #43b581;
-            color: white;
-        }
-
-        .error {
-            background-color: #f04747;
-            color: white;
-        }
+        .success { background-color: #43b581; }
+        .error { background-color: #f04747; }
 
         @keyframes fadeOut {
             0% { opacity: 1; }
@@ -100,7 +94,42 @@
             <span>Paladin</span>
             <input type="number" id="mop-paladin" value="0" min="0" max="100" onchange="updateDiscord()">%
         </div>
-        <!-- Add all other MOP classes similarly -->
+        <div class="class-box">
+            <span>Hunter</span>
+            <input type="number" id="mop-hunter" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Rogue</span>
+            <input type="number" id="mop-rogue" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Priest</span>
+            <input type="number" id="mop-priest" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Death Knight</span>
+            <input type="number" id="mop-deathknight" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Shaman</span>
+            <input type="number" id="mop-shaman" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Mage</span>
+            <input type="number" id="mop-mage" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Warlock</span>
+            <input type="number" id="mop-warlock" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Monk</span>
+            <input type="number" id="mop-monk" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Druid</span>
+            <input type="number" id="mop-druid" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
     </div>
 
     <h2>Wrath of the Lich King Classes</h2>
@@ -113,13 +142,45 @@
             <span>Paladin</span>
             <input type="number" id="wotlk-paladin" value="0" min="0" max="100" onchange="updateDiscord()">%
         </div>
-        <!-- Add all other WOTLK classes similarly -->
+        <div class="class-box">
+            <span>Hunter</span>
+            <input type="number" id="wotlk-hunter" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Rogue</span>
+            <input type="number" id="wotlk-rogue" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Priest</span>
+            <input type="number" id="wotlk-priest" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Death Knight</span>
+            <input type="number" id="wotlk-deathknight" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Shaman</span>
+            <input type="number" id="wotlk-shaman" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Mage</span>
+            <input type="number" id="wotlk-mage" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Warlock</span>
+            <input type="number" id="wotlk-warlock" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
+        <div class="class-box">
+            <span>Druid</span>
+            <input type="number" id="wotlk-druid" value="0" min="0" max="100" onchange="updateDiscord()">%
+        </div>
     </div>
 
     <div id="statusMessage" class="status-message"></div>
 
     <script>
         let updateTimeout;
+        let messageId = localStorage.getItem('lastMessageId');
 
         function showStatus(message, isError = false) {
             const statusElement = document.getElementById('statusMessage');
@@ -132,70 +193,133 @@
             }, 3000);
         }
 
-        function updateDiscord() {
+        function getClassData(prefix) {
+            return {
+                warrior: document.getElementById(prefix + '-warrior').value,
+                paladin: document.getElementById(prefix + '-paladin').value,
+                hunter: document.getElementById(prefix + '-hunter').value,
+                rogue: document.getElementById(prefix + '-rogue').value,
+                priest: document.getElementById(prefix + '-priest').value,
+                deathknight: document.getElementById(prefix + '-deathknight').value,
+                shaman: document.getElementById(prefix + '-shaman').value,
+                mage: document.getElementById(prefix + '-mage').value,
+                warlock: document.getElementById(prefix + '-warlock').value,
+                ...(prefix === 'mop' ? { monk: document.getElementById('mop-monk').value } : {}),
+                druid: document.getElementById(prefix + '-druid').value
+            };
+        }
+
+        function createEmbed() {
+            const mopData = getClassData('mop');
+            const wotlkData = getClassData('wotlk');
+
+            return {
+                title: "WoW Class Distribution Stats",
+                color: 3447003,
+                fields: [
+                    {
+                        name: "__Mists of Pandaria (5.4.8)__",
+                        value: Object.entries(mopData)
+                            .map(([className, value]) => {
+                                const emoji = {
+                                    warrior: '🗡️',
+                                    paladin: '🛡️',
+                                    hunter: '🏹',
+                                    rogue: '🗡️',
+                                    priest: '✨',
+                                    deathknight: '💀',
+                                    shaman: '⚡',
+                                    mage: '🔮',
+                                    warlock: '🌑',
+                                    monk: '🐉',
+                                    druid: '🌿'
+                                }[className];
+                                return `${emoji} **${className.charAt(0).toUpperCase() + className.slice(1)}:** ${value}%`;
+                            })
+                            .join('\n'),
+                        inline: true
+                    },
+                    {
+                        name: "__Wrath of the Lich King__",
+                        value: Object.entries(wotlkData)
+                            .map(([className, value]) => {
+                                const emoji = {
+                                    warrior: '🗡️',
+                                    paladin: '🛡️',
+                                    hunter: '🏹',
+                                    rogue: '🗡️',
+                                    priest: '✨',
+                                    deathknight: '💀',
+                                    shaman: '⚡',
+                                    mage: '🔮',
+                                    warlock: '🌑',
+                                    druid: '🌿'
+                                }[className];
+                                return `${emoji} **${className.charAt(0).toUpperCase() + className.slice(1)}:** ${value}%`;
+                            })
+                            .join('\n'),
+                        inline: true
+                    }
+                ],
+                timestamp: new Date().toISOString(),
+                footer: {
+                    text: "Last updated"
+                }
+            };
+        }
+
+        async function updateDiscord() {
             clearTimeout(updateTimeout);
-            updateTimeout = setTimeout(() => {
+            updateTimeout = setTimeout(async () => {
                 const webhookUrl = document.getElementById('webhookUrl').value;
                 if (!webhookUrl) {
                     showStatus('Please enter a Discord webhook URL', true);
                     return;
                 }
 
-                const mopData = {
-                    warrior: document.getElementById('mop-warrior').value,
-                    paladin: document.getElementById('mop-paladin').value,
-                    // Add all other MOP classes
-                };
+                const embed = createEmbed();
+                const payload = { embeds: [embed] };
 
-                const wotlkData = {
-                    warrior: document.getElementById('wotlk-warrior').value,
-                    paladin: document.getElementById('wotlk-paladin').value,
-                    // Add all other WOTLK classes
-                };
+                try {
+                    if (messageId) {
+                        // Edit existing message
+                        const response = await fetch(`${webhookUrl}/messages/${messageId}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
 
-                const embed = {
-                    title: "WoW Class Distribution Stats",
-                    color: 3447003,
-                    fields: [
-                        {
-                            name: "__Mists of Pandaria (5.4.8)__",
-                            value: `🗡️ **Warrior:** ${mopData.warrior}%\n` +
-                                   `🛡️ **Paladin:** ${mopData.paladin}%\n` +
-                                   // Add all other MOP classes
-                            inline: true
-                        },
-                        {
-                            name: "__Wrath of the Lich King__",
-                            value: `🗡️ **Warrior:** ${wotlkData.warrior}%\n` +
-                                   `🛡️ **Paladin:** ${wotlkData.paladin}%\n` +
-                                   // Add all other WOTLK classes
-                            inline: true
+                        if (!response.ok) {
+                            throw new Error('Failed to edit message');
                         }
-                    ],
-                    timestamp: new Date().toISOString(),
-                    footer: {
-                        text: "Last updated"
-                    }
-                };
-
-                fetch(webhookUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ embeds: [embed] })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        showStatus('Updated Discord successfully!');
                     } else {
-                        showStatus('Failed to update Discord', true);
+                        // Create new message
+                        const response = await fetch(webhookUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to send message');
+                        }
+
+                        const data = await response.json();
+                        messageId = data.id;
+                        localStorage.setItem('lastMessageId', messageId);
                     }
-                })
-                .catch(error => {
+
+                    showStatus('Updated Discord successfully!');
+                } catch (error) {
                     showStatus('Error updating Discord: ' + error.message, true);
-                });
-            }, 1000); // Waits 1 second after the last change before posting
+                    if (error.message.includes('Failed to edit')) {
+                        // If editing fails, try sending a new message
+                        messageId = null;
+                        localStorage.removeItem('lastMessageId');
+                        updateDiscord();
+                    }
+                }
+            }, 1000);
         }
 
         // Save webhook URL to localStorage

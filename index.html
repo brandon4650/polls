@@ -1,11 +1,33 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html>
 <head>
-    <title>WoW Class Polls</title>
-    <!-- Add these meta tags right after the title -->
-    <meta property="og:title" content="World of Warcraft Class Polls">
-    <meta property="og:description" content="Class popularity polls for WoW 5.4.8 (MoP) and 3.3.5 (WotLK)">
+    <title>WoW Class Polls - Live Data</title>
+    <meta property="og:title" content="SOE WoW Class Polls - Live Results">
+    <meta property="og:description" content="
+MoP 5.4.8:
+Warrior: {mop-warrior}%
+Paladin: {mop-paladin}%
+Hunter: {mop-hunter}%
+Rogue: {mop-rogue}%
+Priest: {mop-priest}%
+Death Knight: {mop-deathknight}%
+Shaman: {mop-shaman}%
+Mage: {mop-mage}%
+Warlock: {mop-warlock}%
+Monk: {mop-monk}%
+Druid: {mop-druid}%
+
+WotLK 3.3.5:
+Warrior: {wotlk-warrior}%
+Paladin: {wotlk-paladin}%
+Hunter: {wotlk-hunter}%
+Rogue: {wotlk-rogue}%
+Priest: {wotlk-priest}%
+Death Knight: {wotlk-deathknight}%
+Shaman: {wotlk-shaman}%
+Mage: {wotlk-mage}%
+Warlock: {wotlk-warlock}%
+Druid: {wotlk-druid}%">
     <meta property="og:image" content="SOE.png">
     <meta property="og:url" content="https://soepoll.netlify.app">
     <meta property="og:type" content="website">
@@ -131,6 +153,24 @@
     </style>
 </head>
 <body>
+    <script>
+        // Load poll data from localStorage and update meta description
+        window.onload = function() {
+            const metaDesc = document.querySelector('meta[property="og:description"]');
+            let description = metaDesc.content;
+            
+            // Replace placeholders with actual values
+            document.querySelectorAll('[data-poll-id]').forEach(poll => {
+                const pollId = poll.dataset.pollId;
+                const value = localStorage.getItem(pollId) || '0';
+                description = description.replace(`{${pollId}}`, value);
+            });
+            
+            metaDesc.content = description;
+        };
+    </script>
+</body>
+</html><body>
     <div class="container">
         <header>
             <h1>World of Warcraft Class Polls</h1>
